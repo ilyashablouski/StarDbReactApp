@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import './item-list.css';
-import Spinner from '../spinner';
+import Spinner from "../spinner/spinner";
 
 export default class ItemList extends Component {
 
@@ -22,20 +22,25 @@ export default class ItemList extends Component {
   }
 
   renderItems(arr) {
-    return arr.map(({ id, name }) => {
+    return arr.map((item) => {
+      const { id } = item;
+      //Вызов через props ф-ции и передача в неё объекта с данными
+      const label = this.props.children(item);
+
       return (
         <li className="list-group-item"
           key={id}
-          onClick={() => { this.props.onItemSelected(id) }}>
-          {name}
+          onClick={() => this.props.onItemSelected(id)}>
+          {label}
         </li>
       );
     });
   }
 
   render() {
-    const { itemList } = this.state;
 
+    const { itemList } = this.state;
+    console.log(itemList);
     if (!itemList) {
       return <Spinner />;
     }

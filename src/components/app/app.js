@@ -2,14 +2,15 @@ import React, { Component } from 'react';
 
 import Header from '../header';
 import RandomPlanet from '../random-planet';
-import PeoplePage from '../people-page';
+
 import ErrorIndicator from '../error-indicator';
-import ItemList from '../item-list';
-import PersonDetails from '../person-details';
 import SwapiService from '../../services/swapi-service';
 
+import ErrorBoundry from '../error-boundry';
+import Row from '../row';
+
 import './app.css';
-import ErrorButton from '../error-button/error-button';
+import ItemDetails from '../item-details';
 
 export default class App extends Component {
 
@@ -44,41 +45,68 @@ export default class App extends Component {
       <RandomPlanet /> :
       null;
 
+
+    //refactoring
+    const { getPerson,
+      getStarship,
+      getPersonImage,
+      getStarshipImage } = this.swapiService;
+
+    const personDetails = (
+      <ItemDetails
+        itemId={11}
+        getData={getPerson}
+        getImageUrl={getPersonImage}
+        // Здесь можно передать значения полей (options), кот-е
+        // необходимо взять из объекта item, а так же его имя в интерфейсе
+        // Что взять? Как это будет выглядеть? 
+        fields={
+          [
+            { field: 'gender', label: 'Gender' },
+            { field: 'birthYear', label: 'Birth Year' },
+            { field: 'eyeColor', label: 'Eye Color' },
+          ]
+        }
+      />
+    );
+
+    const starshipDetails = (
+      <ItemDetails
+        itemId={5}
+        getData={getStarship}
+        getImageUrl={getStarshipImage}
+        fields={
+          [
+            { field: 'costInCredits', label: 'Сost in Credits' },
+            { field: 'length', label: 'Length' },
+            { field: 'passengers', label: 'Passengers' },
+          ]
+        } />
+    );
+
     return (
-      <div className="stardb-app">
-        <Header />
-        {planet}
-        <div className="row mb2 button-row">
-          <button
-            className="toggle-planet btn btn-warning btn-lg"
-            onClick={this.toggleRandomPlanet}>
-            Toggle Random Planet
-        </button>
-          <ErrorButton />
-        </div>
+      <ErrorBoundry>
+        <div className="stardb-app">
+          <Header />
 
-        <PeoplePage />
 
-        <div className="row mb2">
-          <div className="col-md-6">
-            <ItemList onItemSelected={this.onPersonSelected}
-              getData={this.swapiService.getAllPlanets} />
-          </div>
-          <div className="col-md-6">
-            <PersonDetails personId={this.state.selectedPerson} />
-          </div>
-        </div>
+          {/* {planet}
+          <div className="row mb2 button-row">
+            <button
+              className="toggle-planet btn btn-warning btn-lg"
+              onClick={this.toggleRandomPlanet}>
+              Toggle Random Planet
+            </button>
+            <ErrorButton />
+          </div> */}
 
-        <div className="row mb2">
-          <div className="col-md-6">
-            <ItemList onItemSelected={this.onPersonSelected}
-              getData={this.swapiService.getAllStarships} />
-          </div>
-          <div className="col-md-6">
-            <PersonDetails personId={this.state.selectedPerson} />
-          </div>
+          {/* <PeoplePage /> */}
+
+          <Row
+            left={personDetails}
+            right={starshipDetails} />
         </div>
-      </div>
+      </ErrorBoundry>
     );
   }
 }
