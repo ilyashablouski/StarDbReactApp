@@ -1,56 +1,36 @@
-import React, { Component } from 'react';
+import React from 'react';
 
+import {withData} from '../hoc-helper';
+import SwapiService from '../../services/swapi-service';
 import './item-list.css';
-import Spinner from "../spinner/spinner";
 
-export default class ItemList extends Component {
+const ItemList = (props) => {
+    const { data, onItemSelected, children: renderLabel} = props;
 
-  state = {
-    itemList: null
-  };
-
-  componentDidMount() {
-
-    const { getData } = this.props;
-
-    getData()
-      .then((itemList) => {
-        this.setState({
-          itemList
-        });
-      });
-  }
-
-  renderItems(arr) {
-    return arr.map((item) => {
+    const items = data.map((item) => {
       const { id } = item;
       //Вызов через props ф-ции и передача в неё объекта с данными
-      const label = this.props.children(item);
-
+      const label = renderLabel(item);
       return (
-        <li className="list-group-item"
+        <li
+          className="list-group-item"
           key={id}
-          onClick={() => this.props.onItemSelected(id)}>
+          onClick={() => onItemSelected(id)}
+        >
           {label}
         </li>
       );
     });
-  }
 
-  render() {
+    return (<ul className="item-list list-group">{items}</ul>);
+};
 
-    const { itemList } = this.state;
-    console.log(itemList);
-    if (!itemList) {
-      return <Spinner />;
-    }
+// Вынесли state, всю логику работы с сетью и того, какой
+// компонент необходимо сейчас отображать в отдельный компонент ф-цию
+// сделав его НЕЗАВИСИМЫМ
 
-    const items = this.renderItems(itemList);
 
-    return (
-      <ul className="item-list list-group">
-        {items}
-      </ul>
-    );
-  }
-}
+const {getAllPeople} = new SwapiService();
+
+// Первый вызов возвращает класс, второй экспортирует
+export default withData(ItemList, getAllPeople);

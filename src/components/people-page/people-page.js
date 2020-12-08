@@ -13,7 +13,7 @@ export default class PeoplePage extends Component {
   swapiService = new SwapiService();
 
   state = {
-    selectedPerson: 3
+    selectedPerson: 11
   };
 
   onPersonSelected = (selectedPerson) => {
@@ -34,14 +34,14 @@ export default class PeoplePage extends Component {
       </ItemList>
     );
 
-    const itemDetails = (
+    const personDetails = (
       <ErrorBoundry>
         <ItemDetails itemId={this.state.selectedPerson} />
       </ErrorBoundry>
     );
 
     return (
-      <Row left={itemList} right={itemDetails} />
+      <Row left={itemList} right={personDetails} />
     );
   }
 }

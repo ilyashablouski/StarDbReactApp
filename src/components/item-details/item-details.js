@@ -5,6 +5,18 @@ import ErrorButton from '../error-button/error-button';
 import './item-details.css';
 
 
+const Record = ({ item, field, label }) => {
+  return (
+    <li className="list-group-item">
+      <span className="term">{label}</span>
+      <span>{item[field]}</span>
+    </li>
+  )
+};
+//именованный экспорт
+export { Record };
+
+//дефолтный экспорт
 export default class ItemDetails extends Component {
 
   state = {
@@ -43,19 +55,20 @@ export default class ItemDetails extends Component {
       });
   }
 
-  renderItems(item, options) {
-    if (options) {
-      return options.map(option => {
-        return (
-          <li className="list-group-item"
-            key={option.field}>
-            <span className="term">{option.label}&nbsp;:</span>
-            <span>{item[option.field]}</span>
-          </li>
-        )
-      });
-    }
-  }
+  //Случай рендера передавая options
+  // renderItems(item, options) {
+  //   if (options) {
+  //     return options.map(option => {
+  //       return (
+  //         <li className="list-group-item"
+  //           key={option.field}>
+  //           <span className="term">{option.label}&nbsp;:</span>
+  //           <span>{item[option.field]}</span>
+  //         </li>
+  //       )
+  //     });
+  //   }
+  // }
 
   render() {
 
@@ -65,8 +78,7 @@ export default class ItemDetails extends Component {
     }
 
     const { name } = item;
-    let { fields } = this.props;
-    console.log(item);
+
     return (
       <div className="item-details card">
         <img className="item-image"
@@ -76,21 +88,14 @@ export default class ItemDetails extends Component {
         <div className="card-body">
           <h4>{name}</h4>
           <ul className="list-group list-group-flush">
-            {/* <li className="list-group-item">
-              <span className="term">Gender</span>
-              <span>{gender}</span>
-            </li>
-            <li className="list-group-item">
-              <span className="term">Birth Year</span>
-              <span>{birthYear}</span>
-            </li>
-            <li className="list-group-item">
-              <span className="term">Eye Color</span>
-              <span>{eyeColor}</span>
-            </li> */}
-
-            {this.renderItems(item, fields)}
-
+            {/* Клонируем React - элементы из коллекции, которую передали
+            через this.props.children и добавляем каждому из них
+            свойство item. */}
+            {
+              React.Children.map(this.props.children, (child) => {
+                return React.cloneElement(child, { item });
+              })
+            }
           </ul>
           <ErrorButton />
         </div>
